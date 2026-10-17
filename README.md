@@ -32,7 +32,6 @@ The rules are intentionally deterministic and explainable for a prototype. They 
    copy .env.example .env
    ```
 
-   Replace `SESSION_SECRET` with a long random value for non-demo use.
 
 3. Start PostgreSQL:
 
@@ -63,7 +62,7 @@ If Docker Desktop is unavailable, the app has a development-only in-memory fallb
 - NID: `1987654321098`
 - Password: `Demo@1234`
 
-The registration endpoint is intentionally disabled so the prototype cannot collect arbitrary real names or NIDs. Accounts and sessions created while offline last only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
+The registration endpoint is intentionally disabled so the prototype cannot collect arbitrary real names or NIDs. The offline mode supports only the supplied demo account; its session lasts only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
 
 ## Demo account
 
@@ -86,6 +85,18 @@ An unknown deed number returns HOLD and instructs the buyer to obtain official v
 - **No live access:** The prototype uses local deterministic records only; it does not scrape, query, bulk-download, or security-test any government or third-party system.
 - **Security scope:** Authentication and session behavior are demonstrated only on this local prototype. The offline workaround stores data in process memory and is not production storage.
 - **AI disclosure:** GitHub Copilot SDK in VS Code was used for scaffolding and implementation assistance. The student team remains responsible for understanding and presenting the code.
+
+## Data sources and limitations
+
+All records in `lib/registry-lookup.ts` are fictional records created for this demonstration. No government portal, external API, public personal-data source, or real deed is queried. The analyzer is a deterministic decision-support prototype: `CLEAR` means no blocking flag was found in the supplied synthetic record, not legal clearance or proof of ownership. Official Sub-Registry, AC Land, tax, possession, and litigation verification remains required before a real transaction.
+
+## Validation
+
+```bash
+npm run test
+npm run lint
+npm run build
+```
 
 ## AI tool disclosure
 

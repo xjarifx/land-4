@@ -1,3 +1,5 @@
+import type { LandCaseInput } from "@/lib/land-analyzer";
+
 export type LandRecordStatus = "clear" | "pending" | "warning" | "blocked";
 
 export type RegistryRecord = {
@@ -63,4 +65,35 @@ const records: Record<string, RegistryRecord> = {
 
 export function lookupRegisteredDeed(deedNumber: string): RegistryRecord | null {
   return records[deedNumber.trim().toUpperCase()] ?? null;
+}
+
+export function getAnalysisInput(record: RegistryRecord): LandCaseInput {
+  const isBlockedDemo = record.deedNumber === "DEMO-1001";
+  return {
+    buyer: "Demo Buyer",
+    seller: record.owner,
+    dagNo: record.parcel.dag,
+    csPlotNo: isBlockedDemo ? "CS-245" : record.parcel.dag,
+    saPlotNo: isBlockedDemo ? "SA-245" : record.parcel.dag,
+    rsPlotNo: isBlockedDemo ? "RS-999" : record.parcel.dag,
+    bsPlotNo: record.parcel.dag,
+    khatianType: "BS",
+    khatianNo: record.parcel.khatian.replace(/^BS-/, ""),
+    mouza: record.parcel.mouza,
+    landArea: record.parcel.area,
+    executionDate: record.deedRegisteredOn,
+    registrationDate: record.deedRegisteredOn,
+    mutationApplicationDate: isBlockedDemo ? "2024-03-01" : "2025-09-01",
+    mutationApprovalDate: isBlockedDemo ? "" : "2025-09-20",
+    mutationStatus: isBlockedDemo ? "In progress" : "Approved",
+    chainComplete: !isBlockedDemo,
+    originalDocuments: !isBlockedDemo,
+    duplicateCopyUsed: false,
+    poaPresent: false,
+    poaVerified: false,
+    recentTaxReceipt: !isBlockedDemo,
+    cleanRegistrySearch: !isBlockedDemo,
+    quickPaymentPressure: false,
+    spellingVariation: false
+  };
 }
