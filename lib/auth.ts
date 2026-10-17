@@ -39,6 +39,9 @@ export async function getCurrentUser() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
+  const fallbackUser = fallbackSessions.get(token);
+  if (fallbackUser) return fallbackUser;
+
   let session;
   try {
     session = await prisma.session.findUnique({

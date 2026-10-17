@@ -7,7 +7,13 @@ import { createSession, findFallbackUser } from "@/lib/auth";
 const schema = z.object({ nid: z.string().regex(/^\d{10,20}$/), password: z.string().min(8) });
 
 export async function POST(request: Request) {
-  const parsed = schema.safeParse(await request.json());
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+  }
+  const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Enter a valid NID and password." }, { status: 400 });
   let user;
   try {

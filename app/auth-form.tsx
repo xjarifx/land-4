@@ -12,18 +12,23 @@ export default function AuthForm() {
     event.preventDefault();
     setLoading(true);
     setMessage("");
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nid, password })
-    });
-    const result = await response.json();
-    setLoading(false);
-    if (!response.ok) {
-      setMessage(result.error ?? "Something went wrong.");
-      return;
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nid, password })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMessage(result.error ?? "Something went wrong.");
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setMessage("The demo server is unavailable. Please refresh and try again.");
+    } finally {
+      setLoading(false);
     }
-    window.location.reload();
   }
 
   return (
@@ -32,7 +37,7 @@ export default function AuthForm() {
         <span className="eyebrow">DIGITAL CITIZEN SERVICES</span>
         <h1>Your identity,<br /><em>securely connected.</em></h1>
         <p>Access essential services with one trusted National ID account.</p>
-        <div className="trust-row"><span>●</span> Your data is encrypted and protected</div>
+        <div className="trust-row"><span>●</span> Synthetic demo data only — no real records are collected</div>
       </section>
       <section className="auth-card">
         <div className="brand-mark">N<span>ID</span></div>
