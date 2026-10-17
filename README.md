@@ -1,6 +1,6 @@
 # NID Citizen Portal
 
-Next.js Bangladesh land due-diligence prototype with National ID (NID) authentication, Prisma, local PostgreSQL, and an explainable fraud/double-selling risk analyzer.
+Next.js Bangladesh land due-diligence prototype with National ID (NID) authentication, Prisma, a project-local SQLite database, and an explainable fraud/double-selling risk analyzer.
 
 The main workflow is intentionally simple: a buyer enters one registered deed/document number and receives a BUY/CLEAR, HOLD, or STOP status. The synthetic registry adapter checks the recorded owner, prior or duplicate sales, pending mutation, deed registration, mortgage/encumbrance, court cases, acquisition/khas status, and recent land tax. The adapter boundary is designed for a future authorized government integration.
 
@@ -33,43 +33,27 @@ The rules are intentionally deterministic and explainable for a prototype. They 
    ```
 
 
-3. Start PostgreSQL:
-
-   ```bash
-   # Start Docker Desktop first on Windows
-   docker compose up -d
-   ```
-
-4. Create the Prisma tables and seed the demo user:
+3. Create the project-local SQLite database and seed the demo user:
 
    ```bash
    npm run db:push
    npm run db:seed
    ```
 
-   If you see `Can't reach database server at localhost:5432`, Docker Desktop is not running or the Postgres container has not started. Run `docker info` to confirm the Docker daemon, then repeat `docker compose up -d`.
+   The database file is created at `prisma/dev.db` and is ignored by Git, so no separate database service or deployment is required.
 
-5. Start the app at [http://localhost:3000](http://localhost:3000):
+4. Start the app at [http://localhost:3000](http://localhost:3000):
 
    ```bash
    npm run dev
    ```
-
-### Running without Docker/PostgreSQL
-
-If Docker Desktop is unavailable, the app has a development-only in-memory fallback. Start the app normally with `npm run dev`, then use the supplied synthetic demo account:
-
-- NID: `1987654321098`
-- Password: `Demo@1234`
-
-The registration endpoint is intentionally disabled so the prototype cannot collect arbitrary real names or NIDs. The offline mode supports only the supplied demo account; its session lasts only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
 
 ## Demo account
 
 - NID: `1987654321098`
 - Password: `Demo@1234`
 
-Passwords are hashed with bcrypt. Sessions are stored in PostgreSQL and represented in the browser by an HTTP-only cookie. The demo credentials are for local development only.
+Passwords are hashed with bcrypt. Sessions are stored in SQLite and represented in the browser by an HTTP-only cookie. The demo credentials are for local development only.
 
 After signing in, enter one of these synthetic demo deed numbers:
 
@@ -83,7 +67,7 @@ An unknown deed number returns HOLD and instructs the buyer to obtain official v
 - **Chosen problem statements:** P3 (Fraud & Double-Selling Detection) and P5 (Citizen Pre-Purchase Verification).
 - **Synthetic data:** The demo account, people, parcels, deeds, dates, and registry checks are fictional. Do not enter real personal or land information.
 - **No live access:** The prototype uses local deterministic records only; it does not scrape, query, bulk-download, or security-test any government or third-party system.
-- **Security scope:** Authentication and session behavior are demonstrated only on this local prototype. The offline workaround stores data in process memory and is not production storage.
+- **Security scope:** Authentication and session behavior are demonstrated only on this local prototype. The project-local SQLite database is intended for a self-contained deployment and is not a substitute for a managed production database with backups and concurrency controls.
 - **AI disclosure:** GitHub Copilot SDK in VS Code was used for scaffolding and implementation assistance. The student team remains responsible for understanding and presenting the code.
 
 ## Data sources and limitations
@@ -106,5 +90,4 @@ AI coding assistance using GitHub Copilot SDK in VS Code was used to scaffold th
 
 ```bash
 npm run db:studio  # Open Prisma Studio
-docker compose down
 ```
