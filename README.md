@@ -58,12 +58,12 @@ The rules are intentionally deterministic and explainable for a prototype. They 
 
 ### Running without Docker/PostgreSQL
 
-If Docker Desktop is unavailable, the app has a development-only in-memory fallback. Start the app normally with `npm run dev`, then use the demo account:
+If Docker Desktop is unavailable, the app has a development-only in-memory fallback. Start the app normally with `npm run dev`, then use the supplied synthetic demo account:
 
 - NID: `1987654321098`
 - Password: `Demo@1234`
 
-Accounts and sessions created while offline last only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
+The registration endpoint is intentionally disabled so the prototype cannot collect arbitrary real names or NIDs. Accounts and sessions created while offline last only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
 
 ## Demo account
 
@@ -78,6 +78,14 @@ After signing in, enter one of these synthetic demo deed numbers:
 - `DEMO-2002` — CLEAR: no synthetic blocking status found
 
 An unknown deed number returns HOLD and instructs the buyer to obtain official verification. The supplied LandTech rulebook prohibits collecting or displaying real personal data or real land records in the demonstration.
+
+## Rulebook compliance
+
+- **Chosen problem statements:** P3 (Fraud & Double-Selling Detection) and P5 (Citizen Pre-Purchase Verification).
+- **Synthetic data:** The demo account, people, parcels, deeds, dates, and registry checks are fictional. Do not enter real personal or land information.
+- **No live access:** The prototype uses local deterministic records only; it does not scrape, query, bulk-download, or security-test any government or third-party system.
+- **Security scope:** Authentication and session behavior are demonstrated only on this local prototype. The offline workaround stores data in process memory and is not production storage.
+- **AI disclosure:** GitHub Copilot SDK in VS Code was used for scaffolding and implementation assistance. The student team remains responsible for understanding and presenting the code.
 
 ## AI tool disclosure
 

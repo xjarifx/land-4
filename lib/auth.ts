@@ -85,11 +85,3 @@ export async function findFallbackUser(nid: string, password: string) {
   const user = fallbackUsers.get(nid);
   return user && await bcrypt.compare(password, user.passwordHash) ? user : null;
 }
-
-export async function createFallbackUser(nid: string, name: string, password: string) {
-  if (!fallbackUsers.has("1987654321098")) await findFallbackUser("1987654321098", "invalid");
-  if (fallbackUsers.has(nid)) return null;
-  const user = { id: `fallback-${randomBytes(12).toString("hex")}`, nid, name, passwordHash: await bcrypt.hash(password, 12) };
-  fallbackUsers.set(nid, user);
-  return user;
-}
