@@ -1,0 +1,91 @@
+# NID Citizen Portal
+
+Next.js Bangladesh land due-diligence prototype with National ID (NID) authentication, Prisma, local PostgreSQL, and an explainable fraud/double-selling risk analyzer.
+
+The main workflow is intentionally simple: a buyer enters one registered deed/document number and receives a BUY/CLEAR, HOLD, or STOP status. The synthetic registry adapter checks the recorded owner, prior or duplicate sales, pending mutation, deed registration, mortgage/encumbrance, court cases, acquisition/khas status, and recent land tax. The adapter boundary is designed for a future authorized government integration.
+
+The underlying analyzer also extracts transaction and parcel attributes, compares CS/SA/RS/BS plot numbers, calculates the deed-registration-to-mutation interval, checks title-chain and evidence gaps, and emits the required JSON report shape:
+
+```json
+{
+  "summary": "...",
+  "chain_of_title_status": "Valid | Incomplete | Broken",
+  "double_selling_risk_level": "High | Medium | Low",
+  "identified_loopholes_and_flags": [],
+  "recommended_verification_steps": []
+}
+```
+
+The rules are intentionally deterministic and explainable for a prototype. They are not a substitute for verification by the Sub-Registry Office, AC Land Office, a licensed surveyor, or a qualified Bangladeshi lawyer.
+
+## Local setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create the local environment file:
+
+   ```bash
+   copy .env.example .env
+   ```
+
+   Replace `SESSION_SECRET` with a long random value for non-demo use.
+
+3. Start PostgreSQL:
+
+   ```bash
+   # Start Docker Desktop first on Windows
+   docker compose up -d
+   ```
+
+4. Create the Prisma tables and seed the demo user:
+
+   ```bash
+   npm run db:push
+   npm run db:seed
+   ```
+
+   If you see `Can't reach database server at localhost:5432`, Docker Desktop is not running or the Postgres container has not started. Run `docker info` to confirm the Docker daemon, then repeat `docker compose up -d`.
+
+5. Start the app at [http://localhost:3000](http://localhost:3000):
+
+   ```bash
+   npm run dev
+   ```
+
+### Running without Docker/PostgreSQL
+
+If Docker Desktop is unavailable, the app has a development-only in-memory fallback. Start the app normally with `npm run dev`, then use the demo account:
+
+- NID: `1987654321098`
+- Password: `Demo@1234`
+
+Accounts and sessions created while offline last only until the Next.js process restarts. PostgreSQL remains the normal storage path and should be started before using the app for persistent data.
+
+## Demo account
+
+- NID: `1987654321098`
+- Password: `Demo@1234`
+
+Passwords are hashed with bcrypt. Sessions are stored in PostgreSQL and represented in the browser by an HTTP-only cookie. The demo credentials are for local development only.
+
+After signing in, enter one of these synthetic demo deed numbers:
+
+- `DEMO-1001` — STOP: pending mutation and later transfer warning
+- `DEMO-2002` — CLEAR: no synthetic blocking status found
+
+An unknown deed number returns HOLD and instructs the buyer to obtain official verification. The supplied LandTech rulebook prohibits collecting or displaying real personal data or real land records in the demonstration.
+
+## AI tool disclosure
+
+AI coding assistance using GitHub Copilot SDK in VS Code was used to scaffold the authentication flow, Prisma setup, UI, and deterministic analyzer. The implementation was reviewed and build-validated by the student team.
+
+## Useful commands
+
+```bash
+npm run db:studio  # Open Prisma Studio
+docker compose down
+```
