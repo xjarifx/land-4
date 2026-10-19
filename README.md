@@ -26,7 +26,7 @@ The rules are intentionally deterministic and explainable for a prototype. They 
    npm install
    ```
 
-2. Create the local environment file:
+2. (Optional) Create the local environment file:
 
    ```bash
    copy .env.example .env
@@ -53,7 +53,9 @@ The rules are intentionally deterministic and explainable for a prototype. They 
 - NID: `1987654321098`
 - Password: `Demo@1234`
 
-Passwords are hashed with bcrypt. Sessions are stored in SQLite and represented in the browser by an HTTP-only cookie. The demo credentials are for local development only.
+Passwords are hashed with bcrypt. Sessions are represented by signed HTTP-only cookies, so they do not require a writable database at runtime. The demo credentials are for local development only.
+
+The production build runs `prisma db push` and `prisma db seed` automatically. This keeps the SQLite database setup inside the project, so a hosted deployment does not need a separate database service or migration step. Login sessions use signed HTTP-only cookies rather than database writes, which also works on hosts with read-only or ephemeral deployment filesystems. Set `SESSION_SECRET` in the host environment if you want to replace the built-in demo fallback secret.
 
 After signing in, enter one of these synthetic demo deed numbers:
 
